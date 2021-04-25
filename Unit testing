@@ -1,0 +1,71 @@
+package com.ameen.calculator.services;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.ameen.calculator.exceptions.EmptyInputException;
+import com.ameen.calculator.exceptions.InvalidCharacterException;
+
+@SpringBootTest
+class CalculatorApplicationTests {
+	
+	@Autowired
+	CalculatorService service;
+	
+	//Positive scenarios
+	//Inputs given by Seezle
+	@Test
+	public void calculateTestSuccess1() {	    
+	    Double result = service.calculate("2+3+3");
+	    Assertions.assertEquals(8, result);
+	}
+	
+	//Empty input
+	@Test
+	public void calculateTestWithEmptyInput() {
+	    Exception exception = assertThrows(EmptyInputException.class, () -> {
+	    	service.calculate("");
+	    });
+	    String expectedMessage = "Empty input, please check the input.";
+	    String actualMessage = exception.getMessage();
+	    assertTrue(actualMessage.contains(expectedMessage));
+	}
+	
+	//Invalid character exception
+	@Test
+	public void calculateTestWithInvalidCharacter() {
+	    Exception exception = assertThrows(InvalidCharacterException.class, () -> {
+	    	service.calculate("5/2- 3^3");
+	    });
+	    String expectedMessage = "Invalid characters present, please check the input.";
+	    String actualMessage = exception.getMessage();
+	    assertTrue(actualMessage.contains(expectedMessage));
+	}
+	
+	//Alphabet character exception
+	@Test
+	public void calculateTestWithAlphabet() {
+	    Exception exception = assertThrows(InvalidCharacterException.class, () -> {
+	    	service.calculate("5/b-3");
+	    });
+	    String expectedMessage = "Invalid characters present, please check the input.";
+	    String actualMessage = exception.getMessage();
+	    assertTrue(actualMessage.contains(expectedMessage));
+	}
+	
+	//Divide by zero exception
+	@Test
+	public void whenDerivedExceptionThrown_thenAssertionSucceds() {
+	    Exception exception = assertThrows(ArithmeticException.class, () -> {
+	    	service.calculate("5/0");
+	    });
+	    String expectedMessage = "/ by zero";
+	    String actualMessage = exception.getMessage();
+	    assertTrue(actualMessage.contains(expectedMessage));
+	}
+}
