@@ -1,0 +1,8 @@
+		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+		headers.add("Authorization", "825765d4-7f8d-4d845ac9c27c0");
+		headers.add("Content-Type", "application/json");
+
+		HttpEntity<?> httpEntity = new HttpEntity<Object>("{\"botId\":\""+botId+"\",\"message\":\""+message+"\"}", headers);
+		ResponseEntity<Response> response = getRestTemplate().postForEntity("https://api/intents", httpEntity, Response.class);
+		
+		System.out.println(response.getBody());
