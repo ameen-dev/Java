@@ -1,0 +1,65 @@
+package com.chat.aibot;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+
+import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.chat.aibot.models.DataObject;
+import com.chat.aibot.repositories.DataObjectRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@SpringBootApplication
+public class AibotApplication  implements CommandLineRunner{
+	
+	@Autowired
+	private DataObjectRepository repository;
+
+	@Override
+	public void run(String... args) throws Exception {
+		Path fileName = Path.of("intents.json");
+        
+        String actual = null;
+		try {
+			actual = Files.readString(fileName);
+			
+		} catch (NoSuchFileException e) {
+			System.out.println("File not available");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	    
+        repository.deleteAll();
+
+		JSONArray jsonArray = new JSONArray(actual);
+		for (Object current : jsonArray) {
+	        ObjectMapper mapper = new ObjectMapper();
+	        DataObject document = mapper.readValue(current.toString(), DataObject.class);
+			repository.save(document);			
+		}
+		
+		
+		for (DataObject document : repository.findAll()) {
+			System.out.println(document);
+		}
+		System.out.println("-------------------------------");
+
+		System.out.println(repository.findByDescription("The visitor says thank you."));
+		
+		System.out.println("-------------------------------");
+
+		
+	}
+	
+	public static void main(String[] args) {
+		SpringApplication.run(AibotApplication.class, args);
+	}
+	
+
+}
