@@ -1,0 +1,35 @@
+package com.ameen.calculator.services;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class DemoApplicationTests {
+	
+	@Autowired
+	CalculatorService service;
+	
+	//Positive scenarios
+	//Inputs given by Seezle
+	@Test
+	public void calculateTestSuccess1() {	    
+	    Double result = service.calculate("2+3+3");
+	    Assertions.assertEquals(8, result);
+	}
+	
+	//Divide by zero exception
+	@Test
+	public void whenDerivedExceptionThrown_thenAssertionSucceds() {
+	    Exception exception = assertThrows(ArithmeticException.class, () -> {
+	    	service.calculate("5/0");
+	    });
+	    String expectedMessage = "/ by zero";
+	    String actualMessage = exception.getMessage();
+	    assertTrue(actualMessage.contains(expectedMessage));
+	}
+}
