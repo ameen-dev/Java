@@ -1,0 +1,34 @@
+package com.buy.watches.exceptions;
+
+public class EmptyInputException extends RuntimeException {
+	public EmptyInputException(String s) {
+		super(s);
+	}
+
+	private static final long serialVersionUID = 1L;
+}
+
+
+------------------------------------------------------------------
+
+In impl class:
+
+throw new EmptyInputException("Empty input. Please check the input.");
+
+------------------------------------------------------------------
+
+In service class:
+
+try {
+			int  finalPrice = cartservice.checkout(cartItems);
+			output.put("Price", finalPrice);
+			return new ResponseEntity<>(output.toMap(), HttpStatus.OK);
+		}catch(EmptyInputException eie) {
+			output.put("Error", eie.getMessage());
+			return new ResponseEntity<>(output.toMap(), HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			output.put("Error", e.getMessage());
+			return new ResponseEntity<>(output.toMap(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+    
+------------------------------------------------------------------
